@@ -18,17 +18,23 @@ const char *vertexShaderSource = "#version 330 core\n"
     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
     "}\0";
 
-const char *fragmentShaderSource = "#version 330 core\n"
+const char *fragmentShaderSource1 = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(1.0f, 0.7f, 0.0f, 1.0f);\n"
+    "    FragColor = vec4(0.4f, 0.3f, 0.7f, 1.0f);\n"
     "}\0";
 const char *fragmentShaderSource2 = "#version 330 core\n"
     "out vec4 FragColor;\n"
     "void main()\n"
     "{\n"
-    "    FragColor = vec4(0.0f, 0.7f, 0.1f, 1.0f);\n"
+    "    FragColor = vec4(0.1f, 0.7f, 0.3f, 1.0f);\n"
+    "}\0";
+const char *fragmentShaderSource3 = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "    FragColor = vec4(0.4f, 0.0f, 0.3f, 1.0f);\n"
     "}\0";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -117,54 +123,68 @@ int main()
     }
 
     // Compile shaders
-    unsigned int fragmentShader = compileShader(fragmentShaderSource, GL_FRAGMENT_SHADER, "FRAGMENT");
+    unsigned int fragmentShader = compileShader(fragmentShaderSource1, GL_FRAGMENT_SHADER, "FRAGMENT");
     unsigned int fragmentShader2 = compileShader(fragmentShaderSource2, GL_FRAGMENT_SHADER, "FRAGMENT2");
+    unsigned int fragmentShader3 = compileShader(fragmentShaderSource3, GL_FRAGMENT_SHADER, "FRAGMENT3");
     unsigned int vertexShader = compileShader(vertexShaderSource, GL_VERTEX_SHADER, "VERTEX");
 
     // create shader program
-    unsigned int rectShader = createShaderProgram(vertexShader, fragmentShader);
-    unsigned int triangleShader = createShaderProgram(vertexShader, fragmentShader2);
-
+    unsigned int shader1 = createShaderProgram(vertexShader, fragmentShader);
+    unsigned int shader2 = createShaderProgram(vertexShader, fragmentShader2);
+    unsigned int shader3 = createShaderProgram(vertexShader, fragmentShader3);
 
     // delete shaders after linking
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    // glDeleteShader(vertexShader);
+    // glDeleteShader(fragmentShader);
 
     // specify how to interpret vertex data
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    float rect_vertices[] = {
+    float vertices1[] = {
          0.5f,  0.7f, 0.0f,
-         0.5f, -0.7f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
+         0.5f, -0.3f, 0.0f,
+         0.0f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
     };
-    unsigned int rect_indices[] = {
+    unsigned int indices1[] = {
         0, 1, 3,
         1, 2, 3
     };
 
-    float tri_vertices[] = {
-        -0.6f, -0.4f, 0.0f,
-        0.6f, -0.4f, 0.0f,
-        0.0f, 0.8f, 0.0f
+    float vertices2[] = {
+        -0.5f,  0.7f, 0.0f,
+        -0.5f, -0.3f, 0.0f,
+         0.0f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
     };
-    unsigned int tri_indices[] = {
-        0, 1, 2
+    unsigned int indices2[] = {
+        1, 2, 3,
+        0, 1, 3
     };
 
-    // send vertices to buffer
-    unsigned int VBOs[2], VAOs[2], EBOs[2];
-    glGenBuffers(2, VBOs);
-    // generate VAO - Vertex Array Object
-    glGenVertexArrays(2, VAOs);
-    glGenBuffers(2, EBOs);
+    float vertices3[] = {
+         0.0f, 0.5f, 0.0f,
+         0.0f, 0.9f, 0.0f,
+        -0.5f, 0.7f, 0.0f,
+         0.5f, 0.7f, 0.0f
+    };
+    unsigned int indices3[] = {
+        0, 1, 2,
+        0, 1, 3
+    };
 
-    // SETUP RECTANGLE
-    setupShape(VAOs[0], VBOs[0], EBOs[0], rect_vertices, sizeof(rect_vertices), rect_indices, sizeof(rect_indices));
-    // SETUP TRIANGLE
-    setupShape(VAOs[1], VBOs[1], EBOs[1], tri_vertices, sizeof(tri_vertices), tri_indices, sizeof(tri_indices));
+    // Generate buffers
+    unsigned int num_shapes = 3;
+    unsigned int VBOs[num_shapes], VAOs[num_shapes], EBOs[num_shapes];
+    glGenBuffers(num_shapes, VBOs);
+    glGenVertexArrays(num_shapes, VAOs);
+    glGenBuffers(num_shapes, EBOs);
+
+    // SETUP SHAPES
+    setupShape(VAOs[0], VBOs[0], EBOs[0], vertices1, sizeof(vertices1), indices1, sizeof(indices1));
+    setupShape(VAOs[1], VBOs[1], EBOs[1], vertices2, sizeof(vertices2), indices2, sizeof(indices2));
+    setupShape(VAOs[2], VBOs[2], EBOs[2], vertices3, sizeof(vertices3), indices3, sizeof(indices3));
 
     //unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -183,13 +203,17 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(rectShader);
+        glUseProgram(shader1);
         glBindVertexArray(VAOs[0]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(triangleShader);
+        glUseProgram(shader2);
         glBindVertexArray(VAOs[1]);
-        glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+        glUseProgram(shader3);
+        glBindVertexArray(VAOs[2]);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
         glBindVertexArray(0);
 
