@@ -36,6 +36,19 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 }
 
+void setupShape(unsigned int VAO, unsigned int VBO, unsigned int EBO, float vertices[], int vsize, unsigned int indices[], int isize) 
+{
+    glBindVertexArray(VAO);
+    // copy vertices array into buffer
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, vsize, vertices, GL_STATIC_DRAW);
+    // copy index array into element buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, isize, indices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+}
+
 int main()
 {
     glfwInit();
@@ -147,30 +160,10 @@ int main()
     glGenVertexArrays(2, VAOs);
     glGenBuffers(2, EBOs);
 
-    // bind vertex array object
-    glBindVertexArray(VAOs[0]);
-
     // SETUP RECTANGLE
-    // copy vertices array into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rect_vertices), rect_vertices, GL_STATIC_DRAW);
-    // copy index array into element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[0]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rect_indices), rect_indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
+    setupShape(VAOs[0], VBOs[0], EBOs[0], rect_vertices, sizeof(rect_vertices), rect_indices, sizeof(rect_indices));
     // SETUP TRIANGLE
-    glBindVertexArray(VAOs[1]);
-
-    // copy vertices array into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(tri_vertices), tri_vertices, GL_STATIC_DRAW);
-    // copy index array into element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBOs[1]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tri_indices), tri_indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    setupShape(VAOs[1], VBOs[1], EBOs[1], tri_vertices, sizeof(tri_vertices), tri_indices, sizeof(tri_indices));
 
     //unbind
     glBindBuffer(GL_ARRAY_BUFFER, 0);
