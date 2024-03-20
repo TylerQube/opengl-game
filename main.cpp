@@ -6,36 +6,34 @@
 #endif
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 
 const size_t WIDTH = 640;
 const size_t HEIGHT = 480;
 const char* WINDOW_NAME = "Learn OpenGL";
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
+std::string loadShaderSource(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return 0;
+    }
 
-const char *fragmentShaderSource1 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    FragColor = vec4(0.4f, 0.3f, 0.7f, 1.0f);\n"
-    "}\0";
-const char *fragmentShaderSource2 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    FragColor = vec4(0.1f, 0.7f, 0.3f, 1.0f);\n"
-    "}\0";
-const char *fragmentShaderSource3 = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "    FragColor = vec4(0.4f, 0.0f, 0.3f, 1.0f);\n"
-    "}\0";
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string shaderSource = buffer.str();
+    return shaderSource; 
+}
+
+// const char *vertexShaderSource = "#version 330 core\n"
+//     "layout (location = 0) in vec3 aPos;\n"
+//     "void main()\n"
+//     "{\n"
+//     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+//     "}\0";
+std::string vertexShaderSource = loadShaderSource("./shaders/vertex.glsl");
+std::string fragmentShaderSource = loadShaderSource("./shaders/fragment.glsl");
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -123,15 +121,11 @@ int main()
     }
 
     // Compile shaders
-    unsigned int fragmentShader = compileShader(fragmentShaderSource1, GL_FRAGMENT_SHADER, "FRAGMENT");
-    unsigned int fragmentShader2 = compileShader(fragmentShaderSource2, GL_FRAGMENT_SHADER, "FRAGMENT2");
-    unsigned int fragmentShader3 = compileShader(fragmentShaderSource3, GL_FRAGMENT_SHADER, "FRAGMENT3");
-    unsigned int vertexShader = compileShader(vertexShaderSource, GL_VERTEX_SHADER, "VERTEX");
+    unsigned int fragmentShader = compileShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER, "FRAGMENT");
+    unsigned int vertexShader = compileShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER, "VERTEX");
 
     // create shader program
     unsigned int shader1 = createShaderProgram(vertexShader, fragmentShader);
-    unsigned int shader2 = createShaderProgram(vertexShader, fragmentShader2);
-    unsigned int shader3 = createShaderProgram(vertexShader, fragmentShader3);
 
     // delete shaders after linking
     // glDeleteShader(vertexShader);
@@ -207,11 +201,11 @@ int main()
         glBindVertexArray(VAOs[0]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(shader2);
+        glUseProgram(shader1);
         glBindVertexArray(VAOs[1]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(shader3);
+        glUseProgram(shader1);
         glBindVertexArray(VAOs[2]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
