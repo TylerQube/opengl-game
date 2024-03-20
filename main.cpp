@@ -198,6 +198,13 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         glUseProgram(shader1);
+
+        float timeValue = glfwGetTime();
+        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+        int vertexColorLocation = glGetUniformLocation(shader1, "ourColor");
+        glUseProgram(shader1);
+        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); 
+
         glBindVertexArray(VAOs[0]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
