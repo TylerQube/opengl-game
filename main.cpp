@@ -55,8 +55,14 @@ void setupShape(unsigned int VAO, unsigned int VBO, unsigned int EBO, float vert
     // copy index array into element buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, isize, indices, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
 }
 
 unsigned int compileShader(const char *source, int shader_type, const std::string& name) 
@@ -132,14 +138,14 @@ int main()
     // glDeleteShader(fragmentShader);
 
     // specify how to interpret vertex data
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(0);
 
     float vertices1[] = {
-         0.5f,  0.7f, 0.0f,
-         0.5f, -0.3f, 0.0f,
-         0.0f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+         0.5f,  0.7f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.5f, -0.3f, 0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+         0.0f,  0.5f, 0.0f, 0.5f, 0.0f, 0.5f
     };
     unsigned int indices1[] = {
         0, 1, 3,
@@ -147,10 +153,10 @@ int main()
     };
 
     float vertices2[] = {
-        -0.5f,  0.7f, 0.0f,
-        -0.5f, -0.3f, 0.0f,
-         0.0f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+        -0.5f,  0.7f, 0.0f, 1.0f, 0.0f, 0.5f,
+        -0.5f, -0.3f, 0.0f, 1.0f, 0.7f, 0.1f,
+         0.0f, -0.5f, 0.0f, 0.2f, 0.6f, 0.9f,
+         0.0f,  0.5f, 0.0f, 0.3f, 0.0f, 0.0f,
     };
     unsigned int indices2[] = {
         1, 2, 3,
@@ -158,10 +164,10 @@ int main()
     };
 
     float vertices3[] = {
-         0.0f, 0.5f, 0.0f,
-         0.0f, 0.9f, 0.0f,
-        -0.5f, 0.7f, 0.0f,
-         0.5f, 0.7f, 0.0f
+         0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.7f,
+         0.0f, 0.9f, 0.0f, 0.8f, 0.8f, 0.2f,
+        -0.5f, 0.7f, 0.0f, 0.2f, 0.2f, 0.0f,
+         0.5f, 0.7f, 0.0f, 0.5f, 0.1f, 0.5f,
     };
     unsigned int indices3[] = {
         0, 1, 2,
