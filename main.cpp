@@ -9,6 +9,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "shader.h"
+
 const size_t WIDTH = 640;
 const size_t HEIGHT = 480;
 const char* WINDOW_NAME = "Learn OpenGL";
@@ -32,8 +34,6 @@ std::string loadShaderSource(const std::string& filename) {
 //     "{\n"
 //     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 //     "}\0";
-std::string vertexShaderSource = loadShaderSource("./shaders/vertex.glsl");
-std::string fragmentShaderSource = loadShaderSource("./shaders/fragment.glsl");
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -65,40 +65,6 @@ void setupShape(unsigned int VAO, unsigned int VBO, unsigned int EBO, float vert
     glEnableVertexAttribArray(1);
 }
 
-unsigned int compileShader(const char *source, int shader_type, const std::string& name) 
-{
-    unsigned int shader = glCreateShader(shader_type);
-    glShaderSource(shader, 1, &source, NULL);
-    glCompileShader(shader);
-
-    int  success;
-    char infoLog[512];
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-    if(!success)
-    {
-        glGetShaderInfoLog(shader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::" << name << "::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    return shader;
-}
-
-unsigned int createShaderProgram(unsigned int vertexShader, unsigned int fragmentShader)
-{
-    unsigned int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    // check for failure
-    int  success;
-    char infoLog[512];
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if(!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-    }
-    return shaderProgram;
-}
-
 int main()
 {
     glfwInit();
@@ -126,16 +92,8 @@ int main()
         return -1;
     }
 
-    // Compile shaders
-    unsigned int fragmentShader = compileShader(fragmentShaderSource.c_str(), GL_FRAGMENT_SHADER, "FRAGMENT");
-    unsigned int vertexShader = compileShader(vertexShaderSource.c_str(), GL_VERTEX_SHADER, "VERTEX");
-
-    // create shader program
-    unsigned int shader1 = createShaderProgram(vertexShader, fragmentShader);
-
-    // delete shaders after linking
-    // glDeleteShader(vertexShader);
-    // glDeleteShader(fragmentShader);
+    // Create shader
+    Shader myShader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
 
     // specify how to interpret vertex data
     // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -203,22 +161,19 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glUseProgram(shader1);
+        myShader.use();
 
         float timeValue = glfwGetTime();
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-        int vertexColorLocation = glGetUniformLocation(shader1, "ourColor");
-        glUseProgram(shader1);
-        glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f); 
+
+        myShader.set4Float("ourColor", 0.0f, greenValue, 0.0f, 0.0f);
 
         glBindVertexArray(VAOs[0]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(shader1);
         glBindVertexArray(VAOs[1]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        glUseProgram(shader1);
         glBindVertexArray(VAOs[2]);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
