@@ -18,6 +18,7 @@
 const size_t WIDTH = 640;
 const size_t HEIGHT = 480;
 const char* WINDOW_NAME = "Learn OpenGL";
+float alphaVal = 0.5f;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -26,8 +27,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void processInput(GLFWwindow *window)
 {
+    float delta = 0.01f;
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) {
+        alphaVal += delta;
+        if(alphaVal > 1.0f) alphaVal = 1.0f;
+    }
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        alphaVal -= delta;
+        if(alphaVal < 0.0f) alphaVal = 0.0f;
+    }
 }
 
 void setupShape(unsigned int VAO, unsigned int VBO, unsigned int EBO, float vertices[], int vsize, unsigned int indices[], int isize) 
@@ -203,7 +213,7 @@ int main()
         float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
 
         myShader.set4Float("ourColor", 0.0f, greenValue, 0.0f, 0.0f);
-
+        myShader.setFloat("alpha", alphaVal);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
