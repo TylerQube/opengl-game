@@ -240,7 +240,7 @@ int main()
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime(), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(angle) + (float)glfwGetTime() * (i + 1), glm::vec3(1.0f * (i + 1) / 9, 0.3f * (i - 3) / 9, 0.5f * (i - 1) / 9));
             glUniformMatrix4fv(glGetUniformLocation(myShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
