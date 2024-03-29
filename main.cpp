@@ -44,28 +44,7 @@ void processInput(GLFWwindow *window)
     }
 }
 
-void setupShape(unsigned int VAO, unsigned int VBO, unsigned int EBO, float vertices[], int vsize, unsigned int indices[], int isize) 
-{
-    glBindVertexArray(VAO);
-    // copy vertices array into buffer
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, vsize, vertices, GL_STATIC_DRAW);
-    // copy index array into element buffer
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, isize, indices, GL_STATIC_DRAW);
-    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    // glEnableVertexAttribArray(0);
-    // position attribute
-    char stride = 8;
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(3* sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // texture attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(6* sizeof(float)));
-    glEnableVertexAttribArray(2);
-}
+
 
 int main()
 {
@@ -93,59 +72,73 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    glEnable(GL_DEPTH_TEST);  
+
 
     // Create shader
     Shader myShader("./shaders/vertex.glsl", "./shaders/fragment.glsl");
 
-    float vertices1[] = {
-                                                // texture coords
-         0.5f,  0.7f, 0.0f, 1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
-         0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
-         0.0f, -0.2f, 0.0f, 0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.5f, 0.0f, 0.5f,   0.0f, 1.0f
-    };
-    unsigned int indices1[] = {
-        0, 1, 3,
-        1, 2, 3
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
     };
 
-    float vertices2[] = {
-        -0.5f,  0.7f, 0.0f, 1.0f, 0.0f, 0.5f,   1.0f, 1.0f,
-        -0.5f,  0.0f, 0.0f, 1.0f, 0.7f, 0.1f,   1.0f, 0.0f,
-         0.0f, -0.2f, 0.0f, 0.2f, 0.6f, 0.9f,   0.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.3f, 0.0f, 0.0f,   0.0f, 1.0f,
-    };
-    unsigned int indices2[] = {
-        1, 2, 3,
-        0, 1, 3
-    };
-
-    float vertices3[] = {
-         0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.7f,   1.0f, 1.0f,
-         0.0f, 0.9f, 0.0f, 0.8f, 0.8f, 0.2f,   0.0f, 0.0f,
-        -0.5f, 0.7f, 0.0f, 0.2f, 0.2f, 0.0f,   1.0f, 0.0f,
-         0.5f, 0.7f, 0.0f, 0.5f, 0.1f, 0.5f,   0.0f, 1.0f,
-    };
-    unsigned int indices3[] = {
-        0, 1, 2,
-        0, 1, 3
-    };
 
     // Generate buffers
-    unsigned int num_shapes = 3;
-    unsigned int VBOs[num_shapes], VAOs[num_shapes], EBOs[num_shapes];
-    glGenBuffers(num_shapes, VBOs);
-    glGenVertexArrays(num_shapes, VAOs);
-    glGenBuffers(num_shapes, EBOs);
+    unsigned int VBO, VAO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
 
-    // SETUP SHAPES
-    setupShape(VAOs[0], VBOs[0], EBOs[0], vertices1, sizeof(vertices1), indices1, sizeof(indices1));
-    setupShape(VAOs[1], VBOs[1], EBOs[1], vertices2, sizeof(vertices2), indices2, sizeof(indices2));
-    setupShape(VAOs[2], VBOs[2], EBOs[2], vertices3, sizeof(vertices3), indices3, sizeof(indices3));
+    glBindVertexArray(VAO);
 
-    //unbind
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    // texture coord attribute
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // draw in wireframe mode
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -157,13 +150,13 @@ int main()
     // set wrapping / filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // load texture
     int width, height, nrChannels;
     stbi_set_flip_vertically_on_load(true); // tell stb_image.h to flip loaded texture's on the y-axis.
-    unsigned char *data = stbi_load("./textures/container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *data = stbi_load(std::filesystem::path("./textures/container.jpg").c_str(), &width, &height, &nrChannels, 0);
     if(data) {
         // generate texture from loaded image
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -181,8 +174,8 @@ int main()
     // set wrapping / filtering options
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     // load happy face
     data = stbi_load("./textures/awesomeface.png", &width, &height, &nrChannels, 0);
@@ -197,11 +190,9 @@ int main()
     // free image memory
     stbi_image_free(data);
 
-
     myShader.use();
     myShader.setInt("texture1", 0);
     myShader.setInt("texture2", 1);
-
 
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -211,33 +202,28 @@ int main()
 
         // set background
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        myShader.use();
-
-        glm::mat4 trans = glm::mat4(1.0f);
-        trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0, 0.0, 1.0));
-        trans = glm::scale(trans, glm::vec3(0.5, 0.5, 0.5));
-
-        unsigned int transformLoc = glGetUniformLocation(myShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(trans));
-
-
-        float timeValue = glfwGetTime();
-        float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-
-        myShader.set4Float("ourColor", 0.0f, greenValue, 0.0f, 0.0f);
-        myShader.setFloat("alpha", alphaVal);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, texture2);
-        for(int i = 0; i < num_shapes; i++)
-        {
-            glBindVertexArray(VAOs[i]);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        }
+
+        // activate shader 
+        myShader.use();
+        glm::mat4 view       = glm::mat4(1.0f);
+        glm::mat4 model      = glm::mat4(1.0f);
+        glm::mat4 projection = glm::mat4(1.0f);
+        model = glm::rotate(model, (float)glfwGetTime(), glm::vec3(0.5f, 1.0f, 0.0f));
+        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+        projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / (float)HEIGHT, 0.1f, 100.0f);
+
+        glUniformMatrix4fv(glGetUniformLocation(myShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(myShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(myShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+        glBindVertexArray(VAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // call events + swap buffers
         glfwSwapBuffers(window);
