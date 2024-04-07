@@ -19,8 +19,8 @@
 #include "stb_image.h"
 
 
-const size_t WIDTH = 640;
-const size_t HEIGHT = 480;
+const size_t WIDTH = 800;
+const size_t HEIGHT = 640;
 const char* WINDOW_NAME = "Learn OpenGL";
 float alphaVal = 0.5f;
 
@@ -39,8 +39,8 @@ glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f, 0.0f);
 bool firstMouse = true;
 float yaw   = -90.0f;
 float pitch = 0.0f;
-float lastX = 800.0f / 2.0;
-float lastY = 600.0f / 2.0;
+float lastx = (float)WIDTH / 2.0;
+float lasty = (float)HEIGHT / 2.0;
 float fov   = 45.0f;
 
 void processInput(GLFWwindow *window)
@@ -56,7 +56,6 @@ void processInput(GLFWwindow *window)
         alphaVal -= delta;
         if(alphaVal < 0.0f) alphaVal = 0.0f;
     }
-
     float cameraSpeed = 4.0f * deltaTime;
     if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
@@ -66,15 +65,18 @@ void processInput(GLFWwindow *window)
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if(glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        cameraPos += cameraUp * cameraSpeed;
+    if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        cameraPos -= cameraUp * cameraSpeed;
 }
 
 
-float lastx = 400, lasty = 300;
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if(firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
+        lastx = xpos;
+        lasty = ypos;
         firstMouse = false;
     }
     float xoffset = xpos - lastx;
