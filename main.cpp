@@ -113,49 +113,48 @@ int main()
     }
     glEnable(GL_DEPTH_TEST);  
 
-
     float vertices[] = {
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f, -0.5f,  
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+        0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
 
-        -0.5f, -0.5f,  0.5f, 
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f, -0.5f,  0.5f, 
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f, -0.5f, 
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f,  0.5f,  0.5f, 
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
 
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
 
-        -0.5f, -0.5f, -0.5f, 
-         0.5f, -0.5f, -0.5f,  
-         0.5f, -0.5f,  0.5f,  
-         0.5f, -0.5f,  0.5f,  
-        -0.5f, -0.5f,  0.5f, 
-        -0.5f, -0.5f, -0.5f, 
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
 
-        -0.5f,  0.5f, -0.5f, 
-         0.5f,  0.5f, -0.5f,  
-         0.5f,  0.5f,  0.5f,  
-         0.5f,  0.5f,  0.5f,  
-        -0.5f,  0.5f,  0.5f, 
-        -0.5f,  0.5f, -0.5f, 
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
     // container VAO
@@ -169,8 +168,11 @@ int main()
     glBindVertexArray(cVAO);
 
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
 
     // light VAO
@@ -179,7 +181,7 @@ int main()
     glBindVertexArray(lVAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
     // draw in wireframe mode
@@ -209,6 +211,7 @@ int main()
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.3f);
         lightingShader.setVec3("lightColor", 1.0f, 0.5f, 0.3f);
+        lightingShader.setVec3("lightPos", lightPos);
 
         glm::mat4 view       = glm::mat4(1.0f);
         glm::mat4 model      = glm::mat4(1.0f);
@@ -231,7 +234,7 @@ int main()
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
-        glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
         
         glBindVertexArray(lVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
