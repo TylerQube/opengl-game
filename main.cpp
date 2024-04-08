@@ -207,11 +207,16 @@ int main()
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glm::mat4 Transform = glm::mat4(1.0f);
+        Transform = glm::rotate(Transform, glm::radians(50.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
         // activate shader 
         lightingShader.use();
         lightingShader.setVec3("objectColor", 1.0f, 0.5f, 0.3f);
         lightingShader.setVec3("lightColor", 1.0f, 0.5f, 0.3f);
         lightingShader.setVec3("lightPos", lightPos);
+
+        unsigned int transformLoc = glGetUniformLocation(lightingShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(Transform));
 
         glm::mat4 view       = glm::mat4(1.0f);
         glm::mat4 model      = glm::mat4(1.0f);
@@ -235,6 +240,10 @@ int main()
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(0.2f));
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+        transformLoc = glGetUniformLocation(lightCubeShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(Transform));
+
         
         glBindVertexArray(lVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);

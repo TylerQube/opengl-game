@@ -8,6 +8,8 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
 
+uniform mat4 transform;
+
 void main()
 {
     // ambient
@@ -16,7 +18,7 @@ void main()
   	
     // diffuse 
     vec3 norm = normalize(Normal);
-    vec3 lightDir = normalize(lightPos - FragPos);
+    vec3 lightDir = normalize(vec3(transform * vec4(lightPos, 1.0f)) - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
             
