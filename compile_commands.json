@@ -1,0 +1,58 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++17",
+      "-fdiagnostics-color=always",
+      "-Wall",
+      "-g",
+      "-I/Users/tylersmith/Projects/learn-opengl/dependencies/include",
+      "-framework",
+      "OpenGL",
+      "-framework",
+      "Cocoa",
+      "-framework",
+      "IOKit",
+      "-framework",
+      "CoreVideo",
+      "-framework",
+      "CoreFoundation",
+      "-Wno-deprecated",
+      "-o",
+      "app",
+      "/Users/tylersmith/Projects/learn-opengl/glad.c"
+    ],
+    "directory": "/Users/tylersmith/Projects/learn-opengl",
+    "file": "/Users/tylersmith/Projects/learn-opengl/glad.c",
+    "output": "/Users/tylersmith/Projects/learn-opengl/app"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-std=c++17",
+      "-fdiagnostics-color=always",
+      "-Wall",
+      "-g",
+      "-I/Users/tylersmith/Projects/learn-opengl/dependencies/include",
+      "-framework",
+      "OpenGL",
+      "-framework",
+      "Cocoa",
+      "-framework",
+      "IOKit",
+      "-framework",
+      "CoreVideo",
+      "-framework",
+      "CoreFoundation",
+      "-Wno-deprecated",
+      "-o",
+      "app",
+      "main.cpp"
+    ],
+    "directory": "/Users/tylersmith/Projects/learn-opengl",
+    "file": "/Users/tylersmith/Projects/learn-opengl/main.cpp",
+    "output": "/Users/tylersmith/Projects/learn-opengl/app"
+  }
+]

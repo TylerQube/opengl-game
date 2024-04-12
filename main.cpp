@@ -1,3 +1,5 @@
+#include "vec3.h"
+#include <cstring>
 #ifdef __APPLE__
 // Defined before OpenGL and GLUT includes to avoid deprecation messages
 #define GL_SILENCE_DEPRECATION
@@ -15,6 +17,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "sphere.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -39,6 +42,8 @@ float lastY = (float)HEIGHT / 2.0;
 float fov   = 45.0f;
 bool firstMouse = true;
 
+bool phong = true;
+
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -56,7 +61,14 @@ void processInput(GLFWwindow *window)
         camera.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
+}
 
+void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+    {
+        phong = !phong;
+    }
 }
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -110,6 +122,7 @@ int main()
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);  
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
+    glfwSetKeyCallback(window, key_callback);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -118,7 +131,19 @@ int main()
     }
     glEnable(GL_DEPTH_TEST);  
 
-    float vertices[] = {
+
+    /*float vertices[] = {
+         0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+         0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 
+        -0.5f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f 
+    };*/
+    /*unsigned int indices[] = {
+        0, 1, 3,
+        1, 2, 3
+    };*/
+
+    float cube_vertices[] = {
         -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f, 
@@ -162,15 +187,40 @@ int main()
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
     };
 
+
     // container VAO
-    unsigned int VBO, cVAO;
+    unsigned int sVBO, cVBO, EBO, sVAO, cVAO;
+    glGenVertexArrays(1, &sVAO);
     glGenVertexArrays(1, &cVAO);
-    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &sVBO);
+    glGenBuffers(1, &cVBO);
 
+    glBindVertexArray(sVAO);
+
+    auto sph = sphere(point3(0, 0, 0), 1, 128, 256);
+
+    std::vector<float> *vertices = sph.generateVertices();
+    glBindBuffer(GL_ARRAY_BUFFER, sVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
+
+    std::vector<int> *indices = sph.generateIndices();
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices->size(), indices->data(), GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    //glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    //glEnableVertexAttribArray(1);
+
+    // LIGHT CUBE SETUP
     glBindVertexArray(cVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, cVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
 
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
@@ -179,16 +229,6 @@ int main()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
 
-
-    // light VAO
-    unsigned int lVAO;
-    glGenVertexArrays(1, &lVAO);
-    glBindVertexArray(lVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
     // draw in wireframe mode
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -196,7 +236,7 @@ int main()
     Shader lightingShader("./shaders/cont_vertex.glsl", "./shaders/cont_fragment.glsl");
     Shader lightCubeShader("./shaders/light_vertex.glsl", "./shaders/light_fragment.glsl");
 
-    glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+    glm::vec3 lightPos(1.1f, 1.0f, 2.0f);
 
 
     // render loop
@@ -223,6 +263,9 @@ int main()
         unsigned int transformLoc = glGetUniformLocation(lightingShader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(Transform));
 
+        unsigned int phongLoc = glGetUniformLocation(lightingShader.ID, "phong");
+        glUniform1i(phongLoc, phong);
+
         lightingShader.setVec3("viewPos", camera.Position);
 
         glm::mat4 view       = glm::mat4(1.0f);
@@ -237,8 +280,8 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-        glBindVertexArray(cVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(sVAO);
+        glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0);
 
         lightCubeShader.use();
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
@@ -251,8 +294,7 @@ int main()
         transformLoc = glGetUniformLocation(lightCubeShader.ID, "transform");
         glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(Transform));
 
-        
-        glBindVertexArray(lVAO);
+        glBindVertexArray(cVAO);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // call events + swap buffers
