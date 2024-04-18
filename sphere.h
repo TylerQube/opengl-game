@@ -15,6 +15,10 @@ class sphere {
             stacks(stacks), 
             slices(slices) {}
 
+        void setCenter(const point3& newCenter) {
+            this->center = newCenter;
+        }
+
         std::vector<float> *generateVertices() {
             auto vertices = new std::vector<float>;
 
