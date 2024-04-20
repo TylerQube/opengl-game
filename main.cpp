@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <cstring>
 #ifdef __APPLE__
 // Defined before OpenGL and GLUT includes to avoid deprecation messages
@@ -11,8 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
-#include <fstream>
-#include <sstream>
+#include <vector>
 
 #include "vec3.h"
 #include "shader.h"
@@ -26,7 +26,7 @@
 
 
 const size_t WIDTH = 800;
-const size_t HEIGHT = 640;
+const size_t HEIGHT = 600;
 const char* WINDOW_NAME = "Learn OpenGL";
 
 float deltaTime = 0.0f;
@@ -37,9 +37,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 } 
 
-Player player(point3(0.0, 2.0, 0.0), 2.0, 0.5);
-bool phong = true;
+std::vector<Wall> worldColliders;
 
+Player player(point3(2.0001, 5.0, 0.0), 5.0, 0.5);
+bool phong = true;
+bool capture_mouse = true;
+
+auto walls = std::vector<Wall>();
 
 void processInput(GLFWwindow *window)
 {
@@ -54,6 +58,10 @@ void processInput(GLFWwindow *window)
         player.movePlayer(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         player.movePlayer(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        player.deltaY(0.3);
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        player.deltaY(-0.3);
 }
 
 void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -61,6 +69,14 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
     {
         phong = !phong;
+    }
+    if (key == GLFW_KEY_P && action == GLFW_PRESS) 
+    {
+        capture_mouse = !capture_mouse;
+        if(capture_mouse) 
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        else
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
     }
 }
 
@@ -73,6 +89,11 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     player.getCamera().ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+int randomNum(int min, int max) {
+    int range = max - min + 1;
+    return rand() % range + min;
 }
 
 int main()
@@ -216,14 +237,128 @@ int main()
 
     glm::vec3 lightPos(0.0f, 3.0f, 0.0f);
 
+
     auto floor = Wall(
         lightingShader,
-        point3(-5, 0, -5),
-        point3(-5, 0,  5),
-        point3( 5, 0,  5)
+        glm::vec3(-5, 0, -5),
+        glm::vec3(-5, 0,  5),
+        glm::vec3( 5, 0,  5)
+    );
+    auto wall1 = Wall(
+        lightingShader,
+        glm::vec3(-5, 0, -5),
+        glm::vec3(-5, 0,  5),
+        glm::vec3(-5, 3,  5)
+    );
+    auto wall2 = Wall(
+        lightingShader,
+        glm::vec3(-5, 0,  5),
+        glm::vec3( 5, 0,  5),
+        glm::vec3( 5, 3,  5)
+    );
+    auto wall3 = Wall(
+        lightingShader,
+        glm::vec3( 5, 0, -5),
+        glm::vec3(-5, 0, -5),
+        glm::vec3(-5, 3, -5)
+    );
+
+    auto gapWall1 = Wall(
+        lightingShader,
+        glm::vec3( 5, 0,  5),
+        glm::vec3( 5, 0,  2),
+        glm::vec3( 5, 3,  2)
+    );
+    auto gapWall2 = Wall(
+        lightingShader,
+        glm::vec3( 5, 0, -5),
+        glm::vec3( 5, 0, -2),
+        glm::vec3( 5, 3, -2)
+    );
+
+    auto floor2 = Wall(
+        lightingShader,
+        glm::vec3(10, 2, -5),
+        glm::vec3(10, 2,  5),
+        glm::vec3(30, 2,  5)
+    );
+    auto wall4 = Wall(
+        lightingShader,
+        glm::vec3(30, 2, -5),
+        glm::vec3(30, 2,  5),
+        glm::vec3(30, 5,  5)
+    );
+    auto wall5 = Wall(
+        lightingShader,
+        glm::vec3(10, 2,  5),
+        glm::vec3(30, 2,  5),
+        glm::vec3(30, 5,  5)
+    );
+    auto wall6 = Wall(
+        lightingShader,
+        glm::vec3(10, 2, -5),
+        glm::vec3(30, 2, -5),
+        glm::vec3(30, 5, -5)
+    );
+
+    auto gapWall3 = Wall(
+        lightingShader,
+        glm::vec3(10, 2,  5),
+        glm::vec3(10, 2,  2),
+        glm::vec3(10, 5,  2)
+    );
+    auto gapWall4 = Wall(
+        lightingShader,
+        glm::vec3(10, 2, -5),
+        glm::vec3(10, 2, -2),
+        glm::vec3(10, 5, -2)
     );
 
 
+    auto ramp = Wall(
+        lightingShader,
+        glm::vec3(5, 0, 2),
+        glm::vec3(10, 2, 2),
+        glm::vec3(10, 2, -2)
+    );
+    auto tunnelWall1 = Wall(
+        lightingShader,
+        glm::vec3(5,  0, 2),
+        glm::vec3(10, 2, 2),
+        glm::vec3(10, 5, 2)
+    );
+    auto tunnelWall2 = Wall(
+        lightingShader,
+        glm::vec3(5,  0, -2),
+        glm::vec3(10, 2, -2),
+        glm::vec3(10, 5, -2)
+    );
+
+    walls.push_back(floor);
+    walls.push_back(wall1);
+    walls.push_back(wall2);
+    walls.push_back(wall3);
+    walls.push_back(floor2);
+    walls.push_back(wall4);
+    walls.push_back(wall5);
+    walls.push_back(wall6);
+    walls.push_back(gapWall1);
+    walls.push_back(gapWall2);
+    walls.push_back(gapWall3);
+    walls.push_back(gapWall4);
+    walls.push_back(ramp);
+    walls.push_back(tunnelWall1);
+    walls.push_back(tunnelWall2);
+
+    for(Wall& w: walls) {
+        std::cout << "Adding" << std::endl;
+        player.addCollider(w);
+        float r = randomNum(0, 255) / 255.0;
+        float g = randomNum(0, 255) / 255.0;
+        float b = randomNum(0, 255) / 255.0;
+        std::cout << r << ' ' << g << ' ' << b << std::endl;
+        w.setColor(r, g, b);  
+    }
     // render loop
     while(!glfwWindowShouldClose(window))
     {
@@ -271,7 +406,9 @@ int main()
 
         //glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0);
 
-        floor.draw();
+        for(auto w: walls) {
+            w.draw(); 
+        }
 
         lightCubeShader.use();
         glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);

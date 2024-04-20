@@ -158,7 +158,7 @@ public:
 private:
     float lastX;
     float lastY;
-    float fov   = 45.0f;
+    float fov   = 90.0f;
     bool firstMouse = true;
 
     // calculates the front vector from the Camera's (updated) Euler Angles
