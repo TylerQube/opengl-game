@@ -1,8 +1,10 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec2 TexCoord;
 in vec3 Normal;  
 in vec3 FragPos;  
+
   
 uniform bool phong;
 
@@ -10,6 +12,8 @@ uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
 uniform vec3 viewPos;
+
+uniform sampler2D myTexture;
 
 void main()
 {
@@ -33,5 +37,5 @@ void main()
     vec3 specular = specularStrength * spec * lightColor;
             
     vec3 result = (ambient + diffuse + specular) * objectColor;
-    FragColor = vec4(phong ? result : objectColor, 1.0);
+    FragColor = texture(myTexture, TexCoord) * vec4(phong ? result : objectColor, 1.0);
 } 

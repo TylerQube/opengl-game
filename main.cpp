@@ -39,7 +39,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 std::vector<Wall> worldColliders;
 
-Player player(point3(2.0001, 5.0, 0.0), 5.0, 0.5);
+Player player(point3(2.0001, 8.0, 0.0), 5.0, 0.5);
 bool phong = true;
 bool capture_mouse = true;
 
@@ -278,60 +278,60 @@ int main()
 
     auto floor2 = Wall(
         lightingShader,
-        glm::vec3(10, 2, -5),
-        glm::vec3(10, 2,  5),
-        glm::vec3(30, 2,  5)
+        glm::vec3(10, 0, -5),
+        glm::vec3(10, 0,  5),
+        glm::vec3(30, 0,  5)
     );
     auto wall4 = Wall(
         lightingShader,
-        glm::vec3(30, 2, -5),
-        glm::vec3(30, 2,  5),
-        glm::vec3(30, 5,  5)
+        glm::vec3(30, 0, -5),
+        glm::vec3(30, 0,  5),
+        glm::vec3(30, 3,  5)
     );
     auto wall5 = Wall(
         lightingShader,
-        glm::vec3(10, 2,  5),
-        glm::vec3(30, 2,  5),
-        glm::vec3(30, 5,  5)
+        glm::vec3(10, 0,  5),
+        glm::vec3(30, 0,  5),
+        glm::vec3(30, 3,  5)
     );
     auto wall6 = Wall(
         lightingShader,
-        glm::vec3(10, 2, -5),
-        glm::vec3(30, 2, -5),
-        glm::vec3(30, 5, -5)
+        glm::vec3(10, 0, -5),
+        glm::vec3(30, 0, -5),
+        glm::vec3(30, 3, -5)
     );
 
     auto gapWall3 = Wall(
         lightingShader,
-        glm::vec3(10, 2,  5),
-        glm::vec3(10, 2,  2),
-        glm::vec3(10, 5,  2)
+        glm::vec3(10, 0,  5),
+        glm::vec3(10, 0,  2),
+        glm::vec3(10, 3,  2)
     );
     auto gapWall4 = Wall(
         lightingShader,
-        glm::vec3(10, 2, -5),
-        glm::vec3(10, 2, -2),
-        glm::vec3(10, 5, -2)
+        glm::vec3(10, 0, -5),
+        glm::vec3(10, 0, -2),
+        glm::vec3(10, 3, -2)
     );
 
 
     auto ramp = Wall(
         lightingShader,
         glm::vec3(5, 0, 2),
-        glm::vec3(10, 2, 2),
-        glm::vec3(10, 2, -2)
+        glm::vec3(10, 0, 2),
+        glm::vec3(10, 0, -2)
     );
     auto tunnelWall1 = Wall(
         lightingShader,
         glm::vec3(5,  0, 2),
-        glm::vec3(10, 2, 2),
-        glm::vec3(10, 5, 2)
+        glm::vec3(10, 0, 2),
+        glm::vec3(10, 3, 2)
     );
     auto tunnelWall2 = Wall(
         lightingShader,
         glm::vec3(5,  0, -2),
-        glm::vec3(10, 2, -2),
-        glm::vec3(10, 5, -2)
+        glm::vec3(10, 0, -2),
+        glm::vec3(10, 3, -2)
     );
 
     walls.push_back(floor);
@@ -351,13 +351,13 @@ int main()
     walls.push_back(tunnelWall2);
 
     for(Wall& w: walls) {
-        std::cout << "Adding" << std::endl;
         player.addCollider(w);
         float r = randomNum(0, 255) / 255.0;
         float g = randomNum(0, 255) / 255.0;
         float b = randomNum(0, 255) / 255.0;
-        std::cout << r << ' ' << g << ' ' << b << std::endl;
         w.setColor(r, g, b);  
+        const char* url = "stone_tile.jpg";
+        w.setTexture(url);
     }
     // render loop
     while(!glfwWindowShouldClose(window))
@@ -404,7 +404,7 @@ int main()
         glBindBuffer(GL_ARRAY_BUFFER, sVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
 
-        //glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0);
+        // glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0);
 
         for(auto w: walls) {
             w.draw(); 
