@@ -80,8 +80,8 @@ class Wall {
         }
 
         void loadTexture() {
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);int width, height, nrChannels;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);int width, height, nrChannels;
             unsigned char* data = stbi_load(this->textureUrl, &width, &height, &nrChannels, 0);
             if(data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -95,13 +95,12 @@ class Wall {
             float wallHeight = glm::length(this->points.at(2) - this->points.at(1));  
             float xScale, yScale;
             if(wallWidth > wallHeight) {
-                yScale = 1.0;
+                yScale = 1.0 ;
                 xScale = wallWidth / wallHeight;
             } else {
                 yScale = wallHeight / wallWidth;
-                xScale = 1.0;
+                xScale = 1.0 ;
             }
-            std::cout << xScale << " " << yScale << std::endl;
             // set texture coordinates
             this->vertices.at(14) = xScale;
             this->vertices.at(31) = yScale;

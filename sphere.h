@@ -9,13 +9,13 @@
 
 class sphere {
     public:
-        sphere(const point3& center, double radius, int stacks, int slices) : 
+        sphere(glm::vec3 center, double radius, int stacks, int slices) : 
             center(center), 
             radius(radius), 
             stacks(stacks), 
             slices(slices) {}
 
-        void setCenter(const point3& newCenter) {
+        void setCenter(glm::vec3 newCenter) {
             this->center = newCenter;
         }
 
@@ -39,11 +39,11 @@ class sphere {
                     // vertex position (x, y, z)
                     x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
                     y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
-                    auto p = point3(x, y, z);
-                    p += center;
-                    vertices->push_back(p.x());
-                    vertices->push_back(p.y());
-                    vertices->push_back(p.z()); 
+                    auto p = glm::vec3(x, y, z);
+                    p += this->center;
+                    vertices->push_back(p.x);
+                    vertices->push_back(p.y);
+                    vertices->push_back(p.z); 
 
                 }
             }
@@ -163,7 +163,7 @@ class sphere {
             return cube_vertices;
         }
     private:
-        point3 center;
+        glm::vec3 center;
         double radius;
         int stacks;
         int slices;

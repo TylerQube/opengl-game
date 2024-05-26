@@ -5,8 +5,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "vec3.h"
-
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
     FORWARD,
@@ -83,9 +81,9 @@ public:
     }
 
     // processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
-    void SetPosition(point3 position)
+    void SetPosition(glm::vec3 position)
     {
-        Position = glm::vec3(position.x(), position.y(), position.z());
+        Position = position;
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.

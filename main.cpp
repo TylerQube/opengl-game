@@ -14,7 +14,6 @@
 #include <iostream>
 #include <vector>
 
-#include "vec3.h"
 #include "shader.h"
 #include "camera.h"
 #include "Player.h"
@@ -39,7 +38,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 std::vector<Wall> worldColliders;
 
-Player player(point3(2.0001, 8.0, 0.0), 5.0, 0.5);
+Player player(glm::vec3(2.0001, 2.0, 0.0), 5.0, 0.5);
 bool phong = true;
 bool capture_mouse = true;
 
@@ -84,7 +83,6 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
     player.getCamera().mouse_callback(window, xposIn, yposIn);
 }
-
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
@@ -198,7 +196,7 @@ int main()
 
     glBindVertexArray(sVAO);
 
-    auto sph = sphere(point3(0, 0, 0), 1, 200, 400);
+    auto sph = sphere(glm::vec3(0, 0, 0), 1, 200, 400);
 
     std::vector<float> *vertices = sph.generateVertices();
     glBindBuffer(GL_ARRAY_BUFFER, sVBO);
@@ -278,60 +276,60 @@ int main()
 
     auto floor2 = Wall(
         lightingShader,
-        glm::vec3(10, 0, -5),
-        glm::vec3(10, 0,  5),
-        glm::vec3(30, 0,  5)
+        glm::vec3(10, 2, -5),
+        glm::vec3(10, 2,  5),
+        glm::vec3(30, 2,  5)
     );
     auto wall4 = Wall(
         lightingShader,
-        glm::vec3(30, 0, -5),
-        glm::vec3(30, 0,  5),
-        glm::vec3(30, 3,  5)
+        glm::vec3(30, 2, -5),
+        glm::vec3(30, 2,  5),
+        glm::vec3(30, 5,  5)
     );
     auto wall5 = Wall(
         lightingShader,
-        glm::vec3(10, 0,  5),
-        glm::vec3(30, 0,  5),
-        glm::vec3(30, 3,  5)
+        glm::vec3(10, 2,  5),
+        glm::vec3(30, 2,  5),
+        glm::vec3(30, 5,  5)
     );
     auto wall6 = Wall(
         lightingShader,
-        glm::vec3(10, 0, -5),
-        glm::vec3(30, 0, -5),
-        glm::vec3(30, 3, -5)
+        glm::vec3(10, 2, -5),
+        glm::vec3(30, 2, -5),
+        glm::vec3(30, 5, -5)
     );
 
     auto gapWall3 = Wall(
         lightingShader,
-        glm::vec3(10, 0,  5),
-        glm::vec3(10, 0,  2),
-        glm::vec3(10, 3,  2)
+        glm::vec3(10, 2,  5),
+        glm::vec3(10, 2,  2),
+        glm::vec3(10, 5,  2)
     );
     auto gapWall4 = Wall(
         lightingShader,
-        glm::vec3(10, 0, -5),
-        glm::vec3(10, 0, -2),
-        glm::vec3(10, 3, -2)
+        glm::vec3(10, 2, -5),
+        glm::vec3(10, 2, -2),
+        glm::vec3(10, 5, -2)
     );
 
 
     auto ramp = Wall(
         lightingShader,
         glm::vec3(5, 0, 2),
-        glm::vec3(10, 0, 2),
-        glm::vec3(10, 0, -2)
+        glm::vec3(10, 2, 2),
+        glm::vec3(10, 2, -2)
     );
     auto tunnelWall1 = Wall(
         lightingShader,
         glm::vec3(5,  0, 2),
-        glm::vec3(10, 0, 2),
-        glm::vec3(10, 3, 2)
+        glm::vec3(10, 2, 2),
+        glm::vec3(10, 5, 2)
     );
     auto tunnelWall2 = Wall(
         lightingShader,
         glm::vec3(5,  0, -2),
-        glm::vec3(10, 0, -2),
-        glm::vec3(10, 3, -2)
+        glm::vec3(10, 2, -2),
+        glm::vec3(10, 5, -2)
     );
 
     walls.push_back(floor);
@@ -355,10 +353,11 @@ int main()
         float r = randomNum(0, 255) / 255.0;
         float g = randomNum(0, 255) / 255.0;
         float b = randomNum(0, 255) / 255.0;
-        w.setColor(r, g, b);  
+        w.setColor(0.6, 0.6, 0.6);  
         const char* url = "stone_tile.jpg";
         w.setTexture(url);
     }
+
     // render loop
     while(!glfwWindowShouldClose(window))
     {
@@ -376,7 +375,7 @@ int main()
         // activate shader 
         lightingShader.use();
         lightingShader.setVec3("objectColor", 0.0f, 0.9f, 0.3f);
-        lightingShader.setVec3("lightColor", 1.0f, 0.5f, 0.3f);
+        lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
 
         unsigned int phongLoc = glGetUniformLocation(lightingShader.ID, "phong");
@@ -399,7 +398,7 @@ int main()
         glBindVertexArray(sVAO);
 
         float newX = sinf(glfwGetTime());
-        sph.setCenter(point3(newX, 0, 0));
+        sph.setCenter(glm::vec3(newX, 0, 0));
         vertices = sph.generateVertices();
         glBindBuffer(GL_ARRAY_BUFFER, sVBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
