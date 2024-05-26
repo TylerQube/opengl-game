@@ -80,15 +80,33 @@ class Wall {
         }
 
         void loadTexture() {
-            int width, height, nrChannels;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);int width, height, nrChannels;
             unsigned char* data = stbi_load(this->textureUrl, &width, &height, &nrChannels, 0);
             if(data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
                 glGenerateMipmap(GL_TEXTURE_2D);
             } else {
-                std::cout << stbi_failure_reason() << std::endl;
+                std::cout << "Failed to load texture" << std::endl;
             }
             stbi_image_free(data);
+
+            float wallWidth = glm::length(this->points.at(1) - this->points.at(0));  
+            float wallHeight = glm::length(this->points.at(2) - this->points.at(1));  
+            float xScale, yScale;
+            if(wallWidth > wallHeight) {
+                yScale = 1.0;
+                xScale = wallWidth / wallHeight;
+            } else {
+                yScale = wallHeight / wallWidth;
+                xScale = 1.0;
+            }
+            std::cout << xScale << " " << yScale << std::endl;
+            // set texture coordinates
+            this->vertices.at(14) = xScale;
+            this->vertices.at(31) = yScale;
+            this->vertices.at(22) = xScale;
+            this->vertices.at(23) = yScale;
         }
 
         void draw() {
