@@ -374,7 +374,7 @@ int main()
 
         // activate shader 
         lightingShader.use();
-        lightingShader.setVec3("objectColor", 0.0f, 0.9f, 0.3f);
+        lightingShader.setVec3("objectColor", 0.5f, 0.5f, 0.5f);
         lightingShader.setVec3("lightColor", 1.0f, 1.0f, 1.0f);
         lightingShader.setVec3("lightPos", lightPos);
 
@@ -395,13 +395,13 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(lightingShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
-        glBindVertexArray(sVAO);
-
-        float newX = sinf(glfwGetTime());
-        sph.setCenter(glm::vec3(newX, 0, 0));
-        vertices = sph.generateVertices();
-        glBindBuffer(GL_ARRAY_BUFFER, sVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
+        // glBindVertexArray(sVAO);
+        //
+        // float newX = sinf(glfwGetTime());
+        // sph.setCenter(glm::vec3(newX, 0, 0));
+        // vertices = sph.generateVertices();
+        // glBindBuffer(GL_ARRAY_BUFFER, sVBO);
+        // glBufferData(GL_ARRAY_BUFFER, sizeof(float) * vertices->size(), vertices->data(), GL_STATIC_DRAW);
 
         // glDrawElements(GL_TRIANGLES, indices->size(), GL_UNSIGNED_INT, 0);
 

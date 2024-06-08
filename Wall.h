@@ -6,15 +6,26 @@
 #include "vec3.h"
 #include "shader.h"
 #include "stb_image.h"
+#include "Mesh.h"
 
 class Wall {
     public:
-        Wall(Shader shader, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) : shader(shader), plane(Plane(p1, p2, p3)) {
+        Wall(Shader shader, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) : mesh(std::vector<Vertex>(), std::vector<unsigned int>()), shader(shader) {
+            shader = Shader(shader);
+            plane = Plane(p1, p2, p3); 
             glm::vec3 p4 = p3 - (p2 - p1);
             glm::vec3 points[] = {p1, p2, p3, p4};
+
+
             for(int i = 0; i < 4; i++) {
                 glm::vec3 p = points[i];
                 this->points.push_back(p);
+
+
+                Vertex vertex;
+                vertex.Position = p;
+                vertex.Normal = plane.normal;
+
                 vertices.push_back((float)p.x);
                 vertices.push_back((float)p.y);
                 vertices.push_back((float)p.z);
@@ -24,29 +35,36 @@ class Wall {
                 
                 switch(i) {
                     case 0:
+                        vertex.TexCoords = glm::vec2(0.0, 0.0);
                         vertices.push_back(0.0);
                         vertices.push_back(0.0);
                         break;
                     case 1:
+                        vertex.TexCoords = glm::vec2(1.0, 0.0);
                         vertices.push_back(1.0);
                         vertices.push_back(0.0);
                         break;
                     case 2:
+                        vertex.TexCoords = glm::vec2(1.0, 1.0);
                         vertices.push_back(1.0);
                         vertices.push_back(1.0);
                         break;
                     case 3:
+                        vertex.TexCoords = glm::vec2(0.0, 1.0);
                         vertices.push_back(0.0);
                         vertices.push_back(1.0);
                         break;
                 }
+                this->meshVertices.push_back(vertex);
             }
 
             int arr[6] = {0, 1, 3, 1, 2, 3}; 
             for(int i : arr) {
-                indices.push_back(i);
+                indices.push_back((unsigned int)i);
             }
-            
+
+
+            this->mesh = Mesh(this->meshVertices, indices);
 
             genBuffers();
             loadTexture();
@@ -81,7 +99,9 @@ class Wall {
 
         void loadTexture() {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);int width, height, nrChannels;
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+            int width, height, nrChannels;
             unsigned char* data = stbi_load(this->textureUrl, &width, &height, &nrChannels, 0);
             if(data) {
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -109,19 +129,20 @@ class Wall {
         }
 
         void draw() {
-            shader.use();
-            shader.setVec3(colorUniform, color.x(), color.y(), color.z());
-            glBindVertexArray(VAO);
-            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  
+            this->mesh.draw(shader);
+            // shader.use();
+            // shader.setVec3(colorUniform, color.x(), color.y(), color.z());
+            // glBindVertexArray(VAO);
+            // glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);  
         }
 
         void setColor(float r, float g, float b) {
-            this->color = vec3(r, g, b);
+            // this->mesh.setColorvec3(r, g, b);
         }
 
         void setTexture(const char* url) {
-            this->textureUrl = url;
-            loadTexture();
+            this->mesh.setTexture(url); 
+            // loadTexture();
         }
 
         Plane& getPlane() { return plane; }
@@ -138,18 +159,16 @@ class Wall {
         unsigned int VBO;
         unsigned int EBO;
         Shader shader; 
+        Mesh mesh;
+        std::vector<Vertex> meshVertices;
 
         unsigned int texture;
         const char* textureUrl;
 
         Plane plane;
 
-        std::string colorUniform = "objectColor";
-        std::string textureUniform = "myTexture";
-        vec3 color = vec3(0.0, 0.9, 0.2);
-
         std::vector<float> vertices;
-        std::vector<int> indices;
+        std::vector<unsigned int> indices;
         std::vector<glm::vec3> points;
 
         bool pointInsideTriangle(const glm::vec3 point, const glm::vec3 normal, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3) {
