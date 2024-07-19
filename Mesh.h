@@ -74,6 +74,19 @@ public:
         if(data) {
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             glGenerateMipmap(GL_TEXTURE_2D);
+
+	    double side1 = getSide1();
+	    double side2 = getSide2();
+
+	    double ratio = side1 / side2;
+	    if(ratio > 1) {
+		vertices[1].TexCoords.x = ratio;
+		vertices[2].TexCoords.x = ratio;
+	    } else {
+		vertices[2].TexCoords.y = 1 / ratio;
+		vertices[3].TexCoords.y = 1 / ratio;
+	    }
+	    setup();
         } else {
             std::cout << "Failed to load texture" << std::endl;
         }
@@ -87,11 +100,20 @@ public:
 private:
     unsigned int VAO, VBO, EBO;
 
-    unsigned int texture;
     const char* textureUrl;
 
     string colorUniform = "objectColor";
     string textureUniform = "myTexture";
+
+    	double getSide1() {
+		double side1 = glm::length(vertices[1].Position - vertices[0].Position);	
+		return side1;
+	}
+
+    	double getSide2() {
+		double side2 = glm::length(vertices[2].Position - vertices[1].Position);	
+		return side2;
+	}
 
 };
 #endif
