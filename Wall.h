@@ -10,7 +10,7 @@
 
 class Wall {
     public:
-        Wall(Shader shader, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) : mesh(std::vector<Vertex>(), std::vector<unsigned int>()), shader(shader) {
+        Wall(Shader shader, glm::vec3 p1, glm::vec3 p2, glm::vec3 p3) : shader(shader), mesh(std::vector<Vertex>(), std::vector<unsigned int>()) {
             plane = Plane(p1, p2, p3); 
             glm::vec3 p4 = p3 - (p2 - p1);
             glm::vec3 points[] = {p1, p2, p3, p4};

@@ -350,9 +350,6 @@ int main()
 
     for(Wall& w: walls) {
         player.addCollider(w);
-        float r = randomNum(0, 255) / 255.0;
-        float g = randomNum(0, 255) / 255.0;
-        float b = randomNum(0, 255) / 255.0;
         w.setColor(0.6, 0.6, 0.6);  
         const char* url = "stone_tile.jpg";
         w.setTexture(url);

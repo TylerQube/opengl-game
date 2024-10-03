@@ -32,21 +32,20 @@ class Player {
             glm::vec3 newVelocity = collideWithWorld(position, posDelta);
 
             auto preGravPos = position + newVelocity;
-            auto gravDelta = glm::vec3(0.0, -3.0, 0.0) * (float)deltaTime;
+            auto gravDelta = glm::vec3(0.0, -5.0, 0.0) * (float)deltaTime;
             auto gravVel = collideWithWorld(preGravPos, gravDelta);  
+
             position = preGravPos + gravVel;
 
             // view bobbing
-            float time = glfwGetTime();
-            float bobOscillate = sin(time / 3.0 * glm::length(velocity) * (2 * M_PI));
-            glm::vec3 cameraPos = position;
-            if(gravVel.y == 0.0) {
-                cameraPos = position + glm::vec3(0.0, bobOscillate / 15.0, 0.0); 
-            }
+            // float time = glfwGetTime();
+            // float bobOscillate = sin(time / 6.0 * glm::length(velocity) * (2 * M_PI));
+            // glm::vec3 cameraPos = position;
+            // if(glm::length(velocity) > 0) {
+                // cameraPos = position + glm::vec3(0.0, bobOscillate / 5.0 + 0.3, 0.0); 
+            // }
 
-            
-
-            camera.SetPosition(cameraPos);
+            camera.SetPosition(position);
             velocity = glm::vec3(); 
         }
 
@@ -110,14 +109,13 @@ class Player {
 private:
     glm::vec3 position;
     glm::vec3 velocity;
-    double maxVelocity = 8.0;
+    double maxVelocity = 12.0;
 
     glm::vec3 hitbox = glm::vec3(1.0, 2.0, 1.0);
 
     Camera camera;       
 
     std::vector<Wall> colliders;
-
 
     bool pointInsideTriangle(const glm::vec3 point, const glm::vec3 normal, const glm::vec3 p1, const glm::vec3 p2, const glm::vec3 p3); 
 
@@ -130,22 +128,6 @@ private:
         };
     }
 
-    Plane nearestRightPlane(glm::vec3 vec, glm::vec3 point) {
-        double x = vec.x, y = vec.y, z = vec.z;
-        double ax = glm::abs(x), ay = glm::abs(y), az = glm::abs(z);
-        auto maxComponent = glm::max(ax, glm::max(ay, az)); 
-
-        if(maxComponent == ax) {
-            return Plane(point, glm::normalize(glm::vec3(-vec.x, 0, 0)));
-        }
-        else if(maxComponent == ay) {
-            return Plane(point, glm::normalize(glm::vec3(0, -vec.y, 0)));
-        }
-        else if(maxComponent == az) {
-            return Plane(point, glm::normalize(glm::vec3(0, 0, -vec.z)));
-        }
-
-    }
 
     Collision collides(Wall wall, const glm::vec3 origin, const glm::vec3 velocity) {
         Collision collision = noCollision();
@@ -219,12 +201,11 @@ private:
             if(getLowestRoot(a, b, c, t, &newT)) {
                 t = newT;
                 auto collisionPoint = origin + velocity * newT;
-                auto slidePlane = nearestRightPlane(point - origin, point);
-                // collision = Collision {
-                //     true,
-                //     collisionPoint,
-                //     plane  
-                // };
+                collision = Collision {
+                    true,
+                    collisionPoint,
+                    Plane(collisionPoint, glm::normalize(origin - collisionPoint)) 
+                };
             }
         }
 
@@ -246,7 +227,6 @@ private:
             if(getLowestRoot(a, b, c, t, &newT)) {
                 float f = (edgeDotVel * newT - edgeDotBaseToVertex) / edgeSq;
                 if(f >= 0.0 && f <= 1.0) {
-                    auto intersection = origin + velocity * newT;
                     t = newT;
                     auto collisionPoint = p1 + f * edge;
                     collision = Collision{
@@ -256,41 +236,6 @@ private:
                     };
                 }
             }
-
-            // glm::vec3 edge = p2-p1;
-            // glm::vec3 edgeToOrigin = (origin + velocity) - p1;
-            // float cosAng = glm::dot(edge, edgeToOrigin) / glm::length(edge) / glm::length(edgeToOrigin);
-            // glm::vec3 projOrigin = p1 + glm::normalize(edge) * cosAng;
-            // double distToEdge = glm::length((origin + velocity) - projOrigin);
-            // std::cout << distToEdge << std::endl;
-            // if(distToEdge <= 1.0) {
-                // collision = Collision{
-                //     true,
-                //     origin + velocity,
-                //     Plane(p1 - projOrigin, glm::normalize((origin + velocity) - projOrigin))
-                // };
-            // }
-            // glm::vec3 start = origin;
-            // glm::vec3 end = origin + velocity;
-            // glm::vec3 lineDirection = glm::normalize(edge); // Direction of the line segment
-            //
-            // // Calculate the closest points on the line segment to the start and end points
-            // glm::vec3 closestPointOnLineStart = p1 + glm::dot(start- p1, lineDirection) * lineDirection;
-            // glm::vec3 closestPointOnLineEnd = p1 + glm::dot(end - p1, lineDirection) * lineDirection;
-            //
-            // // Calculate the distances between the start and end points and their closest points on the line segment
-            // float distanceStart = glm::length(start - closestPointOnLineStart);
-            // float distanceEnd = glm::length(end - closestPointOnLineEnd);
-            //
-            // // Check if the distances are less than or equal to 1.0
-            // if (distanceStart <= 1.0f || distanceEnd <= 1.0f) {
-            //     // collision = Collision{
-            //     //     true,
-            //     //     origin,
-            //     //     nearestRightPlane(velocity, p1)
-            //     // };
-            //     continue;
-            // }
         }
         return collision;
     }
